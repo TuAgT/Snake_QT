@@ -2,7 +2,6 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QLabel>
-#include <QStatusBar>
 #include <QApplication>
 
 GameWindow::GameWindow(QWidget *parent)
@@ -85,17 +84,19 @@ void GameWindow::createMenus()
 
     startAction = new QAction("新游戏", this);
     startAction->setShortcut(QKeySequence("Ctrl+N"));
-    connect(startAction, &QAction::triggered, this, &GameWindow::startNewGame);
+    connect(startAction, &QAction::triggered, this, [this]() { startNewGame(); });
     gameMenu->addAction(startAction);
 
     pauseAction = new QAction("暂停/继续", this);
     pauseAction->setShortcut(QKeySequence("Ctrl+P"));
-    connect(pauseAction, &QAction::triggered, this, &GameWindow::pauseResumeGame);
+    connect(pauseAction, &QAction::triggered, this, [this]() { pauseResumeGame(); });
     gameMenu->addAction(pauseAction);
 
     quitAction = new QAction("退出", this);
     quitAction->setShortcut(QKeySequence("Ctrl+Q"));
-    connect(quitAction, &QAction::triggered, this, &QApplication::quit);
+    connect(quitAction, &QAction::triggered, []() {
+        QApplication::quit();
+    });
     gameMenu->addAction(quitAction);
 
     // 帮助菜单
@@ -106,14 +107,12 @@ void GameWindow::createMenus()
     helpMenu->addAction(aboutAction);
 }
 
-void GameWindow::startNewGame()
-{
+void GameWindow::startNewGame() {
     game->startGame();
     statusLabel->setText("游戏中");
 }
 
-void GameWindow::pauseResumeGame()
-{
+void GameWindow::pauseResumeGame() {
     game->pauseResume();
 }
 

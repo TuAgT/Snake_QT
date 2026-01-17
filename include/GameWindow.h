@@ -23,6 +23,9 @@ public:
 
 private slots:
     void startNewGame();
+
+    void pauseResumeGame() const;
+
     void pauseResumeGame();
     void aboutGame();
 
