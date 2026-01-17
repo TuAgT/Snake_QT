@@ -1,10 +1,12 @@
 #include <QApplication>
-#include <QPushButton>
+#include "../include/GameWindow.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    QPushButton button("Hello world!", nullptr);
-    // button.resize(2000, 1000);
-    button.show();
+    
+    // 创建主窗口
+    GameWindow window;
+    window.show();
+    
     return QApplication::exec();
 }
