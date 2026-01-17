@@ -1,33 +1,42 @@
+# 贪吃蛇游戏发布工作流
+# 此工作流会在创建带有'v'前缀的标签时触发，用于自动创建GitHub Release
 name: Release
 
+# 定义触发事件：当推送带有'v'前缀的标签时
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*'  # 例如 v1.0.0, v2.1.0 等
 
+# 定义工作流所需的权限
 permissions:
-  contents: write
+  contents: write  # 需要写入内容的权限以创建Release
 
 jobs:
+  # 创建Release的任务
   create-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 在Ubuntu上运行
     outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-      version: ${{ env.VERSION }}
+      # 定义输出变量
+      upload_url: ${{ steps.create_release.outputs.upload_url }}  # Release上传URL
+      version: ${{ env.VERSION }}  # 版本号
 
     steps:
+    # 第一步：获取版本号
     - name: Get Version
       run: |
+        # 从标签中提取版本号（去掉'refs/tags/v'前缀）
         echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
+    # 第二步：创建GitHub Release
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.ref }}
-        name: Release v${{ env.VERSION }}
-        draft: false
-        prerelease: false
+        tag_name: ${{ github.ref }}  # 标签名称
+        name: Release v${{ env.VERSION }}  # Release名称
+        draft: false  # 不是草稿
+        prerelease: false  # 不是预发布
         body: |
           ## 版本 v${{ env.VERSION }}
           
@@ -37,74 +46,91 @@ jobs:
           - CMake 构建系统
           - 跨平台支持
 
+  # 构建和上传各平台构建产物的任务
   build-and-upload:
-    needs: create-release
-    runs-on: ${{ matrix.os }}
+    needs: create-release  # 依赖于create-release任务
+    runs-on: ${{ matrix.os }}  # 在多种操作系统上运行
     strategy:
+      # 定义矩阵策略，使工作流能在多个平台上运行
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
+    # 第一步：检出代码
     - uses: actions/checkout@v4
 
+    # 第二步：在Ubuntu上安装Qt
     - name: Install Qt (Ubuntu)
-      if: runner.os == 'Linux'
+      if: runner.os == 'Linux'  # 仅在Linux运行器上执行
       uses: jurplel/install-qt-action@v3
       with:
-        version: '6.6.0'
-        host: 'linux'
-        target: 'desktop'
-        arch: 'gcc_64'
-        dir: '${{ github.workspace }}/qt'
+        version: '6.6.0'    # Qt版本
+        host: 'linux'         # 主机系统类型
+        target: 'desktop'     # 目标平台
+        arch: 'gcc_64'        # 架构类型
+        dir: '${{ github.workspace }}/qt'  # 安装目录
 
+    # 第三步：在Windows上安装Qt
     - name: Install Qt (Windows)
-      if: runner.os == 'Windows'
+      if: runner.os == 'Windows'  # 仅在Windows运行器上执行
       uses: jurplel/install-qt-action@v3
       with:
-        version: '6.6.0'
-        host: 'windows'
-        target: 'desktop'
-        arch: 'win64_msvc2019_64'
-        dir: '${{ github.workspace }}/qt'
+        version: '6.6.0'    # Qt版本
+        host: 'windows'       # 主机系统类型
+        target: 'desktop'     # 目标平台
+        arch: 'win64_msvc2019_64'  # 架构类型
+        dir: '${{ github.workspace }}/qt'  # 安装目录
 
+    # 第四步：在macOS上安装Qt
     - name: Install Qt (macOS)
-      if: runner.os == 'macOS'
+      if: runner.os == 'macOS'  # 仅在macOS运行器上执行
       uses: jurplel/install-qt-action@v3
       with:
-        version: '6.6.0'
-        host: 'mac'
-        target: 'desktop'
-        arch: 'clang_64'
-        dir: '${{ github.workspace }}/qt'
+        version: '6.6.0'    # Qt版本
+        host: 'mac'           # 主机系统类型
+        target: 'desktop'     # 目标平台
+        arch: 'clang_64'      # 架构类型
+        dir: '${{ github.workspace }}/qt'  # 安装目录
 
+    # 第五步：配置CMake
     - name: Configure CMake
       run: cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=Release
 
+    # 第六步：构建项目
     - name: Build
       run: cmake --build ${{ github.workspace }}/build --config Release
 
+    # 第七步：打包并上传Linux构建产物
     - name: Package and Upload Assets (Linux)
-      if: runner.os == 'Linux'
+      if: runner.os == 'Linux'  # 仅在Linux运行器上执行
       run: |
         cd ${{ github.workspace }}/build
+        # 创建tar.gz压缩包
         tar -czf SnakeGame-Linux-${{ needs.create-release.outputs.version }}.tar.gz QTGuiDemo
+        # 上传到Release
         gh release upload v${{ needs.create-release.outputs.version }} SnakeGame-Linux-${{ needs.create-release.outputs.version }}.tar.gz
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ github.token }}  # GitHub令牌
 
+    # 第八步：打包并上传Windows构建产物
     - name: Package and Upload Assets (Windows)
-      if: runner.os == 'Windows'
+      if: runner.os == 'Windows'  # 仅在Windows运行器上执行
       run: |
+        # 创建ZIP压缩包
         Compress-Archive -Path "${{ github.workspace }}\build\Release\QTGuiDemo.exe" -DestinationPath "SnakeGame-Windows-${{ needs.create-release.outputs.version }}.zip"
+        # 上传到Release
         gh release upload v${{ needs.create-release.outputs.version }} SnakeGame-Windows-${{ needs.create-release.outputs.version }}.zip
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ github.token }}  # GitHub令牌
 
+    # 第九步：打包并上传macOS构建产物
     - name: Package and Upload Assets (macOS)
-      if: runner.os == 'macOS'
+      if: runner.os == 'macOS'  # 仅在macOS运行器上执行
       run: |
         cd ${{ github.workspace }}/build
+        # 创建tar.gz压缩包
         tar -czf SnakeGame-macOS-${{ needs.create-release.outputs.version }}.tar.gz QTGuiDemo
+        # 上传到Release
         gh release upload v${{ needs.create-release.outputs.version }} SnakeGame-macOS-${{ needs.create-release.outputs.version }}.tar.gz
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ github.token }}  # GitHub令牌
