@@ -22,6 +22,7 @@ set(SOURCES
     src/SnakeGame.cpp
     src/SnakeWidget.cpp
     src/GameWindow.cpp
+    src/Logger.cpp
 )
 
 # 定义头文件

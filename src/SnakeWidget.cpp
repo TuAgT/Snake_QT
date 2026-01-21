@@ -17,6 +17,7 @@ SnakeWidget::SnakeWidget(QWidget *parent)
     int defaultWidth = 20 * cellSize + 50;  // 加上边距
     int defaultHeight = 20 * cellSize + 100; // 加上信息显示区域
     setFixedSize(defaultWidth, defaultHeight); // 设置固定大小
+    LOG_INFO("SnakeWidget 已初始化");
 }
 
 SnakeWidget::~SnakeWidget()
@@ -35,6 +36,7 @@ void SnakeWidget::setGame(SnakeGame *g)
     if (game) {
         connect(game, &SnakeGame::gameUpdated, this, &SnakeWidget::onGameUpdated);
         connect(game, &SnakeGame::gameOver, this, &SnakeWidget::onGameOver);
+        LOG_DEBUG("SnakeWidget 已连接到游戏逻辑");
     }
 }
 
@@ -65,6 +67,7 @@ void SnakeWidget::paintEvent(QPaintEvent *event)
         painter.drawText(rect(), Qt::AlignCenter, "未初始化游戏");
     }
 
+    LOG_DEBUG("绘制游戏界面");
     QWidget::paintEvent(event);
 }
 
@@ -169,10 +172,12 @@ void SnakeWidget::keyPressEvent(QKeyEvent *event)
 
 void SnakeWidget::onGameUpdated()
 {
+    LOG_DEBUG("界面更新请求");
     update(); // 请求重绘界面
 }
 
 void SnakeWidget::onGameOver()
 {
+    LOG_DEBUG("游戏结束界面更新");
     update(); // 请求重绘界面以显示游戏结束信息
 }

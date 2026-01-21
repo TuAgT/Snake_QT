@@ -6,6 +6,7 @@
 #include <QPaintEvent>
 #include <QKeyEvent>
 #include "SnakeGame.h"
+#include "Logger.h"
 
 // 贪吃蛇游戏显示界面类
 class SnakeWidget : public QWidget

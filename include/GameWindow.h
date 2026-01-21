@@ -11,6 +11,7 @@
 #include <QWidget>
 #include "SnakeGame.h"
 #include "SnakeWidget.h"
+#include "Logger.h"
 
 // 主游戏窗口类
 class GameWindow : public QMainWindow

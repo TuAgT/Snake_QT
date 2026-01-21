@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QTimer>
 #include <QRandomGenerator>
+#include "Logger.h"
 
 // 贪吃蛇游戏逻辑类
 class SnakeGame : public QObject

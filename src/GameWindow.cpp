@@ -13,6 +13,7 @@ GameWindow::GameWindow(QWidget *parent)
 {
     setWindowTitle("贪吃蛇游戏");
     resize(650, 700);
+    LOG_INFO("游戏主窗口已初始化");
 
     // 设置游戏对象到游戏界面
     gameWidget->setGame(game);
@@ -38,6 +39,7 @@ GameWindow::GameWindow(QWidget *parent)
     layout->addLayout(infoLayout);
 
     setCentralWidget(centralWidget);
+    LOG_INFO("主窗口已设置");
 
     // 连接信号槽
     connect(game, &SnakeGame::scoreChanged, [this](int newScore) {
@@ -108,16 +110,19 @@ void GameWindow::createMenus()
 }
 
 void GameWindow::startNewGame() {
+    LOG_INFO("开始新游戏");
     game->startGame();
     statusLabel->setText("游戏中");
 }
 
 void GameWindow::pauseResumeGame() {
+    LOG_DEBUG("暂停/继续游戏");
     game->pauseResume();
 }
 
 void GameWindow::aboutGame()
 {
+    LOG_INFO("显示关于对话框");
     QMessageBox::about(this, "关于贪吃蛇游戏",
                        "贪吃蛇游戏 v1.0\n\n"
                        "控制方式:\n"

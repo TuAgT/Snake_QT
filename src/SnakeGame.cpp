@@ -12,6 +12,8 @@ SnakeGame::SnakeGame(QObject *parent)
     gameTimer = new QTimer(this);
     connect(gameTimer, &QTimer::timeout, this, &SnakeGame::move);
     gameTimer->setInterval(DEFAULT_GAME_SPEED); // 游戏速度
+    LOG_INFO("SnakeGame 已初始化");
+    LOG_INFO("SnakeGame 已初始化");
 }
 
 SnakeGame::~SnakeGame()
@@ -39,6 +41,7 @@ void SnakeGame::startGame()
     generateFood();
     gameTimer->start();
     
+    LOG_INFO("游戏已开始");
     emit gameUpdated();
     emit scoreChanged(score);
 }
@@ -48,9 +51,11 @@ void SnakeGame::pauseResume()
     if (currentState == Playing) {
         currentState = Paused;
         gameTimer->stop();
+        LOG_INFO("游戏已暂停");
     } else if (currentState == Paused) {
         currentState = Playing;
         gameTimer->start();
+        LOG_INFO("游戏已恢复");
     }
     
     emit gameUpdated();
@@ -98,6 +103,7 @@ void SnakeGame::move()
     if (!isValidPosition(newHead)) {
         currentState = GameOver;
         gameTimer->stop();
+        LOG_ERROR("游戏结束 - 撞墙");
         emit gameOver();
         emit gameUpdated();
         return;
@@ -107,6 +113,7 @@ void SnakeGame::move()
     if (snake.contains(newHead)) {
         currentState = GameOver;
         gameTimer->stop();
+        LOG_ERROR("游戏结束 - 撞到自己");
         emit gameOver();
         emit gameUpdated();
         return;
@@ -119,12 +126,15 @@ void SnakeGame::move()
     if (newHead == food) {
         // 吃到食物，增加分数
         score += POINTS_PER_FOOD;
+        LOG_INFO(QString("吃到食物！当前分数: %1").arg(score));
         emit scoreChanged(score);
         generateFood(); // 生成新食物
     } else {
         // 没吃到食物，移除尾部
         snake.removeLast();
     }
+    
+    LOG_DEBUG(QString("蛇移动到位置 (%1, %2)").arg(newHead.x()).arg(newHead.y()));
 
     emit gameUpdated();
 }
