@@ -30,6 +30,7 @@ set(HEADERS
     include/SnakeGame.h
     include/SnakeWidget.h
     include/GameWindow.h
+    include/Logger.h
 )
 
 add_executable(QTGuiDemo ${SOURCES} ${HEADERS})

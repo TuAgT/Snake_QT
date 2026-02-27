@@ -1,7 +1,7 @@
 #include <Logger.h>
 #include <QStandardPaths>
 #include <QCoreApplication>
-
+#include <iostream>
 Logger::Logger() 
     : m_logLevel(LogLevel::INFO)
     , m_consoleOutput(true)
