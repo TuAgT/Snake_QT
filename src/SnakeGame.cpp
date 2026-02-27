@@ -1,4 +1,4 @@
-#include "../include/SnakeGame.h"
+#include <SnakeGame.h>
 #include <QDebug>
 
 SnakeGame::SnakeGame(QObject *parent)

@@ -2,12 +2,8 @@
 #define LOGGER_H
 
 #include <QString>
-#include <QDateTime>
 #include <QMutex>
-#include <QTextStream>
-#include <QFile>
 #include <QDir>
-#include <iostream>
 
 // 日志级别枚举
 enum class LogLevel {
@@ -21,28 +17,31 @@ enum class LogLevel {
 class Logger {
 public:
     // 获取单例实例
-    static Logger& getInstance();
+    static Logger &getInstance();
 
     // 设置日志级别
     void setLogLevel(LogLevel level);
 
     // 设置日志文件路径
-    void setLogFile(const QString& filePath);
+    void setLogFile(const QString &filePath);
 
     // 设置是否输出到控制台
     void setConsoleOutput(bool enabled);
 
     // 记录日志消息
-    void log(LogLevel level, const QString& message);
+    void log(LogLevel level, const QString &message);
 
     // 各种级别的便捷方法
-    void debug(const QString& message);
-    void info(const QString& message);
-    void warn(const QString& message);
-    void error(const QString& message);
+    void debug(const QString &message);
+
+    void info(const QString &message);
+
+    void warn(const QString &message);
+
+    void error(const QString &message);
 
 private:
-    Logger();  // 私有构造函数用于单例模式
+    Logger(); // 私有构造函数用于单例模式
     ~Logger();
 
     // 获取日志级别字符串
@@ -52,8 +51,8 @@ private:
     QString m_logFilePath;
     bool m_consoleOutput;
     QMutex m_mutex;
-    QFile* m_logFile;
-    QTextStream* m_logStream;
+    QFile *m_logFile;
+    QTextStream *m_logStream;
 };
 
 // 宏定义，方便使用日志功能

@@ -1,4 +1,4 @@
-#include "../include/SnakeWidget.h"
+#include <SnakeWidget.h>
 #include <QPainter>
 #include <QPen>
 #include <QBrush>

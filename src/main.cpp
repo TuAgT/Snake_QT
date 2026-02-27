@@ -1,6 +1,6 @@
 #include <QApplication>
-#include "../include/GameWindow.h"
-#include "../include/Logger.h"
+#include <GameWindow.h>
+#include <Logger.h>
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);

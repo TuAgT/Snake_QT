@@ -1,4 +1,4 @@
-#include "../include/GameWindow.h"
+#include <GameWindow.h>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QLabel>
